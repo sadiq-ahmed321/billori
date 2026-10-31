@@ -1,30 +1,49 @@
 const { Client } = require('discord.js-selfbot-v13');
-const client = new Client({
-    patchConfig: false,
-    checkUpdate: false
+const express = require('express');
+const http = require('http');
+
+const client = new Client({ checkUpdate: false });
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Render Web Service ko active rakhne ke liye server root
+app.get('/', (req, res) => {
+  res.send('WINDS Bot Status: 24/7 Active & Running');
 });
 
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-    
-    client.user.setPresence({
-        status: 'dnd',
-        activities: [{
-            name: 'WINDS-DEVELOPMENT (EST.2015)',
-            type: 'WATCHING',
-            applicationId: 'YOUR_APPLICATION_ID_HERE', // Discord Dev Portal se Application ID
-            assets: {
-                largeImage: 'my_logo', // Dev Portal par upload ki gayi image ka key name
-                largeText: 'LIVE-INDIA' // Hover karne par dikhne wala text
-            }
-        }]
-    });
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running and listening on port ${PORT}`);
 });
 
+// Self-ping keep-alive mechanism taaki bot 24/7 online rahe
 setInterval(() => {
-    console.log('Keep-alive ping sent at: ' + new Date().toISOString());
-}, 30000);
+  http.get(`http://localhost:${PORT}`, (res) => {
+    // Ping successful
+  }).on('error', (err) => {
+    console.error('Keep-alive ping error:', err.message);
+  });
+}, 5 * 60 * 1000); // Har 5 minute mein ping karega
 
-client.login(process.env.DISCORD_TOKEN).catch(err => {
-    console.error('Login Failed:', err);
+client.on('ready', async () => {
+  console.log(`[+] Logged in successfully as ${client.user.tag}!`);
+  
+  // Custom Watching Status
+  client.user.setPresence({
+    status: 'online',
+    activities: [{
+      name: 'WINDS-DEVELOPMENT (EST. 2015)',
+      type: 'WATCHING'
+    }]
+  });
+  console.log('[+] Status set to: Watching WINDS-DEVELOPMENT (EST. 2015)');
 });
+
+// Render Environment Variable se token uthayega
+const token = process.env.DISCORD_TOKEN;
+
+if (!token) {
+  console.error("[-] Error: DISCORD_TOKEN environment variable is missing!");
+  process.exit(1);
+}
+
+client.login(token);
