@@ -1,49 +1,13 @@
-const { Client } = require('discord.js-selfbot-v13');
-const express = require('express');
-const http = require('http');
-
-const client = new Client({ checkUpdate: false });
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Render Web Service ko active rakhne ke liye server root
-app.get('/', (req, res) => {
-  res.send('WINDS Bot Status: 24/7 Active & Running');
-});
-
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running and listening on port ${PORT}`);
-});
-
-// Self-ping keep-alive mechanism taaki bot bina UptimeRobot ke 24/7 chale
-setInterval(() => {
-  http.get(`http://localhost:${PORT}`, (res) => {
-    // Ping successful
-  }).on('error', (err) => {
-    console.error('Keep-alive ping error:', err.message);
-  });
-}, 5 * 60 * 1000); // Har 5 minute mein khud ko ping karega
-
-client.on('ready', async () => {
-  console.log(`[+] Logged in successfully as ${client.user.tag}!`);
-  
-  // Custom Watching Status
-  client.user.setPresence({
-    status: 'online',
-    activities: [{
-      name: 'WINDS-DEVELOPMENT (EST.2015)',
-      type: 'WATCHING'
-    }]
-  });
-  console.log('[+] Status set to: Watching WINDS-DEVELOPMENT (EST.2015)');
-});
-
-// Render Environment Variable se token uthayega
-const token = process.env.DISCORD_TOKEN;
-
-if (!token) {
-  console.error("[-] Error: DISCORD_TOKEN environment variable is missing!");
-  process.exit(1);
+{
+  "name": "winds-discord-bot",
+  "version": "1.0.0",
+  "description": "Discord 24/7 Status Bot for Render",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js-selfbot-v13": "latest",
+    "express": "^4.19.2"
+  }
 }
-
-client.login(token);
