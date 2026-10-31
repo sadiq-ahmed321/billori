@@ -10,8 +10,8 @@ client.on('ready', () => {
     client.user.setPresence({
         status: 'dnd',
         activities: [{
-            name: 'LIVE-INDIA',
-            type: 'PLAYING',
+            name: 'WINDS-DEVELOPMENT (EST.2015)',
+            type: 'WATCHING',
             applicationId: 'YOUR_APPLICATION_ID_HERE', // Discord Dev Portal se Application ID
             assets: {
                 largeImage: 'my_logo', // Dev Portal par upload ki gayi image ka key name
